@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import database.AccountDBAO;
 
+
 /**
  * Servlet implementation class RegisterServlet
  */
@@ -88,19 +89,22 @@ public class RegisterServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 		String id = request.getParameter("email");
 		String password = request.getParameter("psw");
+		String firstname = request.getParameter("firstname");
+		String lastname = request.getParameter("lastname");
+		String mobile = request.getParameter("mobile");
 		boolean result = false ;
 		boolean IDcheck = true; 
 		//to check whether id is unique.		
 		try {
 			AccountDBAO account = new AccountDBAO();
-			IDcheck = account.CheckUniqueID (id, password);
+			IDcheck = account.CheckUniqueID (id);
 		}
 		catch (Exception e)
 		{
 		 e.printStackTrace();		
 		}
 		if (!(IDcheck)){
-			System.out.print("ID already exists in the system. Please contact Admin for verification.");
+			//System.out.print("ID already exists in the system. Please contact Admin for verification.");
 			out.println("<br> <b>ID already exists in the system. Please contact Admin for verification.</b>");
 			out.println("<br> </br>");
 			out.println("<a href=\"http://127.0.0.1:8080/miniapp/login.jsp\">Click Here to return to Login Page.</a>");
@@ -112,16 +116,20 @@ public class RegisterServlet extends HttpServlet {
 		//If unique, proceed to create account
 		try {
 			AccountDBAO account = new AccountDBAO();
-			result = account.create(id, password);
+			result = account.create(id, password,firstname,lastname,mobile);
 			
 		}
 		catch (Exception e)
 		{
 		 e.printStackTrace();		
 		}
+		
+
 		if (result){
-			System.out.print("Registration is succcessful");
+			//System.out.print("Registration is succcessful");
 			out.println("<br> <b>Registration is succcessful</b>");
+			out.println("<br> </br>");
+			out.println("<a href=\"http://127.0.0.1:8080/miniapp/login.jsp\">Click Here to return to Login Page.</a>");
 			//request.getRequestDispatcher("/bookstore").forward(request,response);
 			return;
 		}

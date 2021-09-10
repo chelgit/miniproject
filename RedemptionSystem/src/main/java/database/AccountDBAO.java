@@ -50,7 +50,7 @@ public class AccountDBAO {
     private boolean conFree = true;
     
     // Database configuration
-    public static String url = "jdbc:mysql://localhost:3306/test";
+    public static String url = "jdbc:mysql://localhost:3306/REDEMPTION_DB";
     public static String dbdriver = "com.mysql.jdbc.Driver";
     public static String username = "root";
     public static String password = "Passw0rd";
@@ -112,7 +112,7 @@ public class AccountDBAO {
     	boolean status = false;
         try {
             //String selectStatement = "select * from accounts where id = ? and password = ?";
-        	String selectStatement = "select * from accounts where id = ?";      	
+        	String selectStatement = "select * from user where email_address = ?";      	
             getConnection();           
             PreparedStatement prepStmt = con.prepareStatement(selectStatement);
             prepStmt.setString(1, id);
@@ -138,11 +138,11 @@ public class AccountDBAO {
         return status;
     }
     
-    public boolean CheckUniqueID(String id, String password)  throws NoSuchAlgorithmException {
+    public boolean CheckUniqueID(String id)  throws NoSuchAlgorithmException {
     	boolean status = true;//return true if ID provided is unique (i.e not in system)
         try {
             //String selectStatement = "select * from accounts where id = ? and password = ?";
-        	String selectStatement = "select count(*) from accounts where id = ?";      	
+        	String selectStatement = "select count(*) from user where email_address = ?";      	
             getConnection();           
             PreparedStatement prepStmt = con.prepareStatement(selectStatement);
             prepStmt.setString(1, id);
@@ -151,7 +151,7 @@ public class AccountDBAO {
             ResultSet rs = prepStmt.executeQuery();           
             rs.next();//need Move the cursor to the next row
 			int count = rs.getInt("count(*)");
-			System.out.println(count);
+			//System.out.println(count);
             if (count==1) {     	
                	status=false ;  	  //id actually exists         
             }        
@@ -165,7 +165,7 @@ public class AccountDBAO {
     }
     
     
-    public boolean create(String id, String password)throws NoSuchAlgorithmException  {
+    public boolean create(String id, String password,String firstname,String lastname,String mobile)throws NoSuchAlgorithmException  {
     	boolean status = false;
         try {
         	
@@ -174,13 +174,45 @@ public class AccountDBAO {
           	String salt = getSalt();
           	String passwordHashedSalted = hashPassword(password + salt);
           	
-            String sqlStatement = "insert into accounts(id,password, salt) values (?,?,?);";  
+            String sqlStatement = "insert into user(first_name,last_name,mobilenumber,email_address,password, salt) values (?,?,?,?,?,?);";  
             getConnection();
             
             PreparedStatement prepStmt = con.prepareStatement(sqlStatement);
-            prepStmt.setString(1, id);
-            prepStmt.setString(2, passwordHashedSalted);
-            prepStmt.setString(3, salt);
+            prepStmt.setString(1, firstname);
+            prepStmt.setString(2, lastname);
+            prepStmt.setString(3, mobile);
+            prepStmt.setString(4, id);
+            prepStmt.setString(5, passwordHashedSalted);
+            prepStmt.setString(6, salt);
+            
+            int x = prepStmt.executeUpdate();
+            
+            if (x == 1) {
+            	status = true;       
+            } 
+            
+            prepStmt.close();
+            releaseConnection();
+           
+        } catch (SQLException ex) {
+            releaseConnection();
+            ex.printStackTrace();
+        }
+        return status;
+    }
+    
+    public boolean changepassword(String id, String newpassword)throws NoSuchAlgorithmException  {
+    	boolean status = false;
+        try {	
+        	//String passwordHashedSalted = hashAndSaltPassword(password);        	
+          	String salt = getSalt();
+          	String passwordHashedSalted = hashPassword(newpassword + salt);        	
+            String sqlStatement = "update user set password=(?),salt=(?) where email_address = (?);";  
+            getConnection();            
+            PreparedStatement prepStmt = con.prepareStatement(sqlStatement);
+            prepStmt.setString(1, passwordHashedSalted);
+            prepStmt.setString(2, salt);
+            prepStmt.setString(3, id);
             
             int x = prepStmt.executeUpdate();
             

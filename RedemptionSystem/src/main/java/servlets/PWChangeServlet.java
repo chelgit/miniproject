@@ -10,18 +10,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import database.AccountDBAO;
+import SMTP.Main;
 
 /**
- * Servlet implementation class LoginServlet
+ * Servlet implementation class PWChangeServlet
  */
-@WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/PWChangeServlet")
+public class PWChangeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginServlet() {
+    public PWChangeServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,59 +32,25 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-	/*	PrintWriter out = response.getWriter();
-		String gRecaptchaResponse = request
-				.getParameter("g-recaptcha-response");
-		System.out.println(gRecaptchaResponse);
-		boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
-	
-		String id = request.getParameter("id");
-		String password = request.getParameter("password");
-		boolean result = false ;
-		
-		try {
-			AccountDBAO account = new AccountDBAO();
-			result = account.authenticate(id, password);
-		}
-		catch (Exception e)
-		{
-		 e.printStackTrace();
-			
-		}	
-		//to ensure is legitimate access
-		if (!(verify)){
-			response.sendRedirect("login_captcha_fail.jsp");
-			return;		
-		}
-		//to ensure cred is correct and legitimate access
-		if (result && verify){
-			System.out.print("Credential Correct!");
-			out.println("<br> <b>Credential Correct</b>");
-			return;		
-		}
-		else { 		
-			response.sendRedirect("login.jsp");
-			return;
-		}*/
-		
 	}
-		
+
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+		
 		PrintWriter out = response.getWriter();
-		String gRecaptchaResponse = request
-				.getParameter("g-recaptcha-response");
 		//System.out.println(gRecaptchaResponse);
-		boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 		boolean IDcheck = true;
 	
 		String id = request.getParameter("email");
-		String password = request.getParameter("password");
+		String password = request.getParameter("psw");
+		String newpassword = request.getParameter("pswn");
 		boolean result = false ;
+		boolean pwchange_result = false ;
+		Main.main(id);//send out notification email to user that password change has been triggered (for security)
 		
 		try {
 			AccountDBAO account = new AccountDBAO();
@@ -95,12 +62,8 @@ public class LoginServlet extends HttpServlet {
 		 e.printStackTrace();
 			
 		}	
-		//to ensure recaptcha is done. 
-		if (!(verify)){
-			response.sendRedirect("login_captcha_fail.jsp");
-			return;		
-		}
-		//if no such member, need to flag out. 
+
+		//if no such member, need to flag out. True=ID don't exists.
 		if ((IDcheck)){
 			//System.out.print("ID do not exist. Please verify.");
 			out.println("<br> <b>ID do not exist. Please verify.</b>");
@@ -111,11 +74,26 @@ public class LoginServlet extends HttpServlet {
 			//out.println(IDcheck);//to troubleshoot
 			return;
 		}
-		//to ensure cred is correct and legitimate access
-		if (result && verify){
-			//System.out.print("Credential Correct!");
-			out.println("<br> <b>Credential Correct</b>");
-			return;		
+		//to ensure cred is correct and then change old password to new password
+		if (result){
+			try {
+				AccountDBAO account = new AccountDBAO();
+				pwchange_result = account.changepassword(id, newpassword);
+			}
+			catch (Exception e)
+			{
+			 e.printStackTrace();			
+			}		
+		}
+		if ((pwchange_result)){
+			//System.out.print("ID do not exist. Please verify.");
+			out.println("<br> <b>Password has been changed. Please verify by logging in.</b>");
+			out.println("<br></br>");
+			out.println("<a href=\"http://127.0.0.1:8080/miniapp/login.jsp\">Click Here to return to Login Page.</a>");
+			out.println("<br> </br>");
+			out.println("<a href=\"http://127.0.0.1:8080/miniapp/Register.jsp\">Click Here to return to Registration Page.</a>");
+			//out.println(IDcheck);//to troubleshoot
+			return;
 		}
 		else {
 			//System.out.print("ID or Password is incorrect. Please verify.");
