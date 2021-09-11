@@ -9,20 +9,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import SMTP.EmailFunc_Reset;
 import database.AccountDBAO;
-import utility.VerifyRecaptcha;
 
 /**
- * Servlet implementation class LoginServlet
+ * Servlet implementation class PWResetServlet
  */
-@WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/PWResetServlet")
+public class PWResetServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginServlet() {
+    public PWResetServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -32,76 +32,40 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-	/*	PrintWriter out = response.getWriter();
-		String gRecaptchaResponse = request
-				.getParameter("g-recaptcha-response");
-		System.out.println(gRecaptchaResponse);
-		boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
-	
-		String id = request.getParameter("id");
-		String password = request.getParameter("password");
-		boolean result = false ;
-		
-		try {
-			AccountDBAO account = new AccountDBAO();
-			result = account.authenticate(id, password);
-		}
-		catch (Exception e)
-		{
-		 e.printStackTrace();
-			
-		}	
-		//to ensure is legitimate access
-		if (!(verify)){
-			response.sendRedirect("login_captcha_fail.jsp");
-			return;		
-		}
-		//to ensure cred is correct and legitimate access
-		if (result && verify){
-			System.out.print("Credential Correct!");
-			out.println("<br> <b>Credential Correct</b>");
-			return;		
-		}
-		else { 		
-			response.sendRedirect("login.jsp");
-			return;
-		}*/
-		
+
 	}
-		
+
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+		
 		PrintWriter out = response.getWriter();
-		String gRecaptchaResponse = request
-				.getParameter("g-recaptcha-response");
 		//System.out.println(gRecaptchaResponse);
-		boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 		boolean IDcheck = true;
+		boolean authentication=true;
 	
 		String id = request.getParameter("email");
-		String password = request.getParameter("password");
-		boolean result = false ;
+		String lastname = request.getParameter("lastname");
+		String mobile = request.getParameter("mobile");
+		String resettedpassword;
+		boolean pwreset_result = false ;
+		
 		
 		try {
 			AccountDBAO account = new AccountDBAO();
-			result = account.authenticate(id, password);
 			IDcheck = account.CheckUniqueID (id);
+			authentication=account.PWresetauthenticate(id,lastname,mobile);
 		}
 		catch (Exception e)
 		{
 		 e.printStackTrace();
 			
 		}	
-		//to ensure recaptcha is done. 
-		if (!(verify)){
-			response.sendRedirect("login_captcha_fail.jsp");
-			return;		
-		}
-		//if no such member, need to flag out. 
+
+		//if no such member, need to flag out. True=ID don't exists.
 		if ((IDcheck)){
 			//System.out.print("ID do not exist. Please verify.");
 			out.println("<br> <b>ID do not exist. Please verify.</b>");
@@ -112,24 +76,41 @@ public class LoginServlet extends HttpServlet {
 			//out.println(IDcheck);//to troubleshoot
 			return;
 		}
-		//to ensure cred is correct and legitimate access
-		if (result && verify){
-			//System.out.print("Credential Correct!");
-			out.println("<br> <b>Credential Correct</b>");
-			return;		
+		//to ensure cred is correct and then change old password to new password
+		if (!(IDcheck)&authentication){
+			try {
+				AccountDBAO account = new AccountDBAO();
+				System.out.println("ID Authenicated and password reset going to take place.");
+				resettedpassword=AccountDBAO.getSalt();				
+				pwreset_result = account.resetpassword(id, resettedpassword);
+				EmailFunc_Reset.main(id,resettedpassword);//send out notification email to user that password change has been triggered (for security)
+			}
+			catch (Exception e)
+			{
+			 e.printStackTrace();			
+			}		
+		}
+		if (pwreset_result){
+			//System.out.print("ID do not exist. Please verify.");
+			out.println("<br> <b>Password has been reset and you will receive a mail shortly. Please verify by logging in.</b>");
+			out.println("<br></br>");
+			out.println("<a href=\"http://127.0.0.1:8080/miniapp/login.jsp\">Click Here to return to Login Page.</a>");
+			out.println("<br> </br>");
+			out.println("<a href=\"http://127.0.0.1:8080/miniapp/Register.jsp\">Click Here to return to Registration Page.</a>");
+			//out.println(IDcheck);//to troubleshoot
+			return;
 		}
 		else {
 			//System.out.print("ID or Password is incorrect. Please verify.");
-			out.println("<br> <b>ID or Password is incorrect. Please verify.</b>");
+			out.println("<br> <b>Details provided are incorrect. Please verify.</b>");
 			out.println("<br> </br>");
 			out.println("<a href=\"http://127.0.0.1:8080/miniapp/login.jsp\">Click Here to return to Login Page.</a>");
 			out.println("<br> </br>");
 			out.println("<a href=\"http://127.0.0.1:8080/miniapp/Register.jsp\">Click Here to return to Registration Page.</a>");
 			return;
 		}
+		
 	}
 
 }
-
-
 

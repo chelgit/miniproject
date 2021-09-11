@@ -127,8 +127,42 @@ public class AccountDBAO {
               	
                	 if (hashPasswordDB.equals(hashPassword(password + saltDB))) {
                		status = true;  
+               		System.out.println("Credentials has been authenicated");
                	 }   	             
-            }        
+            } 
+            
+            prepStmt.close();
+            releaseConnection();       
+        } catch (SQLException ex) {
+            releaseConnection();
+            ex.printStackTrace();
+        }
+        return status;
+    }
+    
+    public boolean PWresetauthenticate(String id, String lastname, String mobile)  throws NoSuchAlgorithmException {
+    	boolean status = false;
+        try {
+            //String selectStatement = "select * from accounts where id = ? and password = ?";
+        	String selectStatement = "select * from user where email_address = ?";      	
+            getConnection();           
+            PreparedStatement prepStmt = con.prepareStatement(selectStatement);
+            prepStmt.setString(1, id);
+            //prepStmt.setString(2, password);
+            
+            ResultSet rs = prepStmt.executeQuery();
+            
+            if (rs.next()) {
+            	
+              	String lastnameDB = rs.getString("last_name");//db field name
+              	String mobileDB = rs.getString("mobilenumber");
+              	
+               	 if (lastname.equals(lastnameDB)&&mobile.equals(mobileDB)) {
+               		status = true;  
+               		System.out.println("Credentials has been authenicated");
+               	 }   	             
+            } 
+            
             prepStmt.close();
             releaseConnection();       
         } catch (SQLException ex) {
@@ -154,7 +188,8 @@ public class AccountDBAO {
 			//System.out.println(count);
             if (count==1) {     	
                	status=false ;  	  //id actually exists         
-            }        
+            }  
+            System.out.println("Check for violation of UniqueID completed");
             prepStmt.close();
             releaseConnection();       
         } catch (SQLException ex) {
@@ -188,7 +223,8 @@ public class AccountDBAO {
             int x = prepStmt.executeUpdate();
             
             if (x == 1) {
-            	status = true;       
+            	status = true;  
+            	System.out.println("Registration is completed");
             } 
             
             prepStmt.close();
@@ -215,9 +251,42 @@ public class AccountDBAO {
             prepStmt.setString(3, id);
             
             int x = prepStmt.executeUpdate();
+                      
+            if (x == 1) {
+            	status = true;   
+            	System.out.println("Password has been updated");
+            } 
+            
+            prepStmt.close();
+            releaseConnection();
+           
+        } catch (SQLException ex) {
+            releaseConnection();
+            ex.printStackTrace();
+        }
+        return status;
+    }
+    
+    public boolean resetpassword(String id, String resettedpassword)throws NoSuchAlgorithmException  {
+    	boolean status = false;
+    	//String EmailPW = null;
+        try {	
+        	//String passwordHashedSalted = hashAndSaltPassword(password);        	
+          	String salt = getSalt();
+          	String passwordHashedSalted = hashPassword(resettedpassword + salt);        	
+            String sqlStatement = "update user set password=(?),salt=(?) where email_address = (?);";  
+            //EmailPW= passwordHashedSalted;
+            getConnection();            
+            PreparedStatement prepStmt = con.prepareStatement(sqlStatement);
+            prepStmt.setString(1, passwordHashedSalted);
+            prepStmt.setString(2, salt);
+            prepStmt.setString(3, id);
+            
+            int x = prepStmt.executeUpdate();
             
             if (x == 1) {
-            	status = true;       
+            	status = true;  
+            	System.out.println("Password has been updated");
             } 
             
             prepStmt.close();

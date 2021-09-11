@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import database.AccountDBAO;
-import SMTP.Main;
+import SMTP.EmailFunc;
 
 /**
  * Servlet implementation class PWChangeServlet
@@ -50,7 +50,7 @@ public class PWChangeServlet extends HttpServlet {
 		String newpassword = request.getParameter("pswn");
 		boolean result = false ;
 		boolean pwchange_result = false ;
-		Main.main(id);//send out notification email to user that password change has been triggered (for security)
+		EmailFunc.main(id);//send out notification email to user that password change has been triggered (for security)
 		
 		try {
 			AccountDBAO account = new AccountDBAO();
@@ -68,9 +68,9 @@ public class PWChangeServlet extends HttpServlet {
 			//System.out.print("ID do not exist. Please verify.");
 			out.println("<br> <b>ID do not exist. Please verify.</b>");
 			out.println("<br></br>");
-			out.println("<a href=\"http://127.0.0.1:8080/miniapp/login.jsp\">Click Here to return to Login Page.</a>");
+			out.println("<a href=\"http://127.0.0.1:8080/miniapp5/login.jsp\">Click Here to return to Login Page.</a>");
 			out.println("<br> </br>");
-			out.println("<a href=\"http://127.0.0.1:8080/miniapp/Register.jsp\">Click Here to return to Registration Page.</a>");
+			out.println("<a href=\"http://127.0.0.1:8080/miniapp5/Register.jsp\">Click Here to return to Registration Page.</a>");
 			//out.println(IDcheck);//to troubleshoot
 			return;
 		}

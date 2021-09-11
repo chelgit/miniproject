@@ -26,7 +26,8 @@
 	data-sitekey="6Ld7ZFEcAAAAAOXqT8KXn4OoyePkoikXWmpZmERC"></div>
 	</form>
 	<p>Do not have an account? <a href="http://localhost:8080/miniapp/Register.jsp">Create Account</a>.</p>
-	<p>Forgot your password? <a href="http://localhost:8080/miniapp/ChangePassword.jsp">Change your Password</a>.</p>
+	<p>Changing your password? <a href="http://localhost:8080/miniapp/ChangePassword.jsp">Click here</a>.</p>
+	<p>Forgot your password? <a href="http://localhost:8080/miniapp/ResetPassword.jsp">Reset Here</a>.</p>
 	
 	
 </body>
