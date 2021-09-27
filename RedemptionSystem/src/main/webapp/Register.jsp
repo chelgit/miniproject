@@ -10,7 +10,7 @@
 <script>
 function ValidateEmail() {
 	var email = document.getElementById("email").value;
-	var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	var mailformat = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 	if(!(email.value.match(mailformat))){
 		document.getElementById("message3").innerHTML = "**WrongEmailFormat**";
 		return false;
@@ -21,7 +21,6 @@ function ValidateEmail() {
 function InputVerification() {
   var pw = document.getElementById("psw").value;
   var pwConfirmation = document.getElementById("psw-confirm").value;
-
  //check empty password field
  //minimum password length validation
   if(pw.length < 10) {
@@ -32,6 +31,7 @@ function InputVerification() {
 	     document.getElementById("message2").innerHTML = "**Please make sure your passwords match.**";
 	     return false;
 	  }
+
 }
 </script>
 <body>
@@ -44,7 +44,8 @@ function InputVerification() {
     <hr>
 
     <label for="email"><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name="email" id="email" required pattern="[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" oninvalid="setCustomValidity('Please enter a valid email address.')">
+    <input type="text" placeholder="Enter Email" name="email" id="email" required pattern="[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" oninput="this.reportValidity()" ><!-- required pattern="[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" oninvalid="setCustomValidity('Please enter a valid email address.')" -->
+    <span id = "message3" style="color:red"> </span> 
     <!-- https://stackoverflow.com/questions/2049502/what-characters-are-allowed-in-an-email-address -->
     <br>
     <label for="mobile"><b>Mobile</b></label>

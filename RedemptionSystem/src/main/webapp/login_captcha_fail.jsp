@@ -15,7 +15,7 @@
 	<form action="LoginServlet" method="POST">
 	
 	<label for="id"><b>Email</b></label>
-	<input type="text" name="id" id="id" size="20" placeholder="Enter Email" required><br> 
+	<input type="text" name="id" id="id" size="20" placeholder="Enter Email" required pattern="[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" oninput="this.reportValidity()"><br> 
 
 	<label for="password"><b>Password</b></label>
 	<input type="password" name="password" id="password" placeholder="Enter Password" size="20" required> 

@@ -13,8 +13,8 @@ public class EmailFunc_Reset {
         String from = USER_NAME;
         String pass = PASSWORD;
         String[] to = { RECIPIENT }; // list of recipient email addresses
-        String subject = "[VRSystem] Automated Password Change Notification.";
-        String body = "For security purposes, you received this email because you have recently completed a password reset. Please change your password ASAP. Your new password is inside the bracket ["  + RESETTEDPASSWORD+ "]. Please email us at VRSystem@gmail.com or call us at 67480299 immediately if you have not done so.";
+        String subject = "[VRSystem] Automated Password Reset Notification.";
+        String body = "For security purposes, you received this email because you have recently completed a password reset. Please change your password ASAP. Your new password is inside the bracket ["  + RESETTEDPASSWORD+ "]. Please email us at VRSystem@gmail.com or call us at 67480299 immediately if you did not reset your password.";
         sendFromGMail(from, pass, to, subject, body);
     }
 

@@ -2,14 +2,25 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import database.AccountDBAO;
+import database.PromotionPage;
 import utility.VerifyRecaptcha;
 
 /**
@@ -85,6 +96,8 @@ public class LoginServlet extends HttpServlet {
 		String id = request.getParameter("email");
 		String password = request.getParameter("password");
 		boolean result = false ;
+		int pointbalance = -999;
+		List<Map> list = new ArrayList<Map>();
 		
 		try {
 			AccountDBAO account = new AccountDBAO();
@@ -115,7 +128,33 @@ public class LoginServlet extends HttpServlet {
 		//to ensure cred is correct and legitimate access
 		if (result && verify){
 			//System.out.print("Credential Correct!");
-			out.println("<br> <b>Credential Correct</b>");
+			//out.println("<br> <b>Credential Correct</b>");
+			try {
+				PromotionPage account = new PromotionPage();
+				pointbalance = account.GetPointBalance(id);			}
+			catch (Exception e)
+			{
+			 e.printStackTrace();	
+			}	
+			
+			try {
+				PromotionPage items = new PromotionPage();
+				list = items.GetPromotionItems();			}
+			catch (Exception e)
+			{
+			 e.printStackTrace();	
+			}					
+			
+			HttpSession session = request.getSession(true);
+			session.setAttribute("key_list",list);
+			session.setAttribute("id", id);//for redemptionservlet
+			request.setAttribute("id", id);//for promotionpage.jsp
+			//request.setAttribute("id", id);
+			session.setAttribute("pointbalance", pointbalance);
+			//session.setAttribute("password", password);//testing to redirect from redemptionservlet
+			request.setAttribute("pointbalance", pointbalance);
+			request.getRequestDispatcher("PromotionPage.jsp").forward(request, response);
+			response.sendRedirect("PromotionPage.jsp");
 			return;		
 		}
 		else {

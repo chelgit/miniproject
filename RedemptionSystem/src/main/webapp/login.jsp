@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="SMTP.Main"%>
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +14,7 @@
 	<form action="LoginServlet" method="POST">
 	
 	<label for="email"><b>Email</b></label>
-	<input type="text" name="email" id="email" size="20" placeholder="Enter Email" required><br> 
+	<input type="text" name="email" id="email" size="20" placeholder="Enter Email" required pattern="[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" oninput="this.reportValidity()"><br> 
 
 	<label for="password"><b>Password</b></label>
 	<input type="password" name="password" id="password" placeholder="Enter Password" size="20" required> 

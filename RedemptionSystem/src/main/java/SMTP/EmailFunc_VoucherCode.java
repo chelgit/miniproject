@@ -4,17 +4,17 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 //need javax and activation jar file
-public class Main {
+public class EmailFunc_VoucherCode {
 
     private static String USER_NAME = "VoucherRedemptionSystem";  // GMail user name (just the part before "@gmail.com")
     private static String PASSWORD = "VoucherRedemptionSystem123!"; // GMail password
 
-    public static void main(String RECIPIENT) {//main(String[] args)
+    public static void main(String RECIPIENT, String VoucherCode, String promotion) {//main(String[] args)
         String from = USER_NAME;
         String pass = PASSWORD;
         String[] to = { RECIPIENT }; // list of recipient email addresses
-        String subject = "[VRSystem] Automated Password Change Notification.";
-        String body = "For security purposes, you received this email because you have recently initiated a password change. Please email us at VRSystem@gmail.com or call us at 67480299 if you have not done so.";
+        String subject = "[VRSystem] Automated Voucher Code Notification.";
+        String body = "Your redemption code for " + promotion + " is inside the bracket ["  + VoucherCode+ "]. Please email us at VRSystem@gmail.com or call us at 67480299 immediately if you did not perform this transaction.";
         sendFromGMail(from, pass, to, subject, body);
     }
 

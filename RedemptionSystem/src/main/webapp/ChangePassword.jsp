@@ -44,7 +44,7 @@ function InputVerification() {
     <hr>
 
     <label for="email"><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name="email" id="email" required pattern="[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" oninvalid="setCustomValidity('Please enter a valid email address.')">
+    <input type="text" placeholder="Enter Email" name="email" id="email" required pattern="[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" oninput="this.reportValidity()">
     <!-- https://stackoverflow.com/questions/2049502/what-characters-are-allowed-in-an-email-address -->
 	<br>
     <label for="psw"><b>Old Password</b></label>
